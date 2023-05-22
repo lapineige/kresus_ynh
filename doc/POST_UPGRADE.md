@@ -1,4 +1,4 @@
-Domain: __DOMAIN_
+Domain: __DOMAIN__
 Path  : __PATH__
 Config: __INSTALL_DIR__/config.ini
 
