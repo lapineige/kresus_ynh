@@ -35,7 +35,7 @@ then
 	ynh_secure_remove --file="/home/ynh$app"
 fi
 
-if [ -z "$salt" ]
+if [ -z "${salt:-}" ]
 then
 	salt=$(ynh_string_random 40)
 	ynh_app_setting_set "$app" salt "$salt"
@@ -51,15 +51,15 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-	tmpdir="$(mktemp -d)"
-	cp "$install_dir/config.ini" "$tmpdir/config.ini"
-	ynh_secure_remove --file="$install_dir"
+	#tmpdir="$(mktemp -d)"
+	#cp "$install_dir/config.ini" "$tmpdir/config.ini"
+	#ynh_secure_remove --file="$install_dir"
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir"
+	ynh_setup_source --dest_dir="$install_dir" --keep="config.ini"
 
-	cp "$tmpdir/config.ini" "$install_dir/config.ini"
-	ynh_secure_remove --file="$tmpdir"
+	#cp "$tmpdir/config.ini" "$install_dir/config.ini"
+	#ynh_secure_remove --file="$tmpdir"
 
 	mkdir -p "$install_dir/data"
 fi
@@ -157,6 +157,7 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --weight
 mkdir -p "/var/log/$app/"
 touch "/var/log/$app/$app.log"
 chown -R $app:$app "/var/log/$app/"
+
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
 
