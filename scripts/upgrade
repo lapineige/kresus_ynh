@@ -38,7 +38,7 @@ fi
 if [ -z "${salt:-}" ]
 then
 	salt=$(ynh_string_random 40)
-	ynh_app_setting_set "$app" salt "$salt"
+	ynh_app_setting_set --app=$app --key=salt --value=$salt
 fi
 
 usermod -d $install_dir $app
