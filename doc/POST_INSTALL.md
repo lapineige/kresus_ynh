@@ -6,4 +6,4 @@ Please remember the default behavior of YunoHost when installing a new app is: e
 This may be an issue for Kresus as it is a personal tool. Please remember to edit access rights in the YunoHost web administration panel or using command line interface.
 
 Note about config.ini: this package will regenerate the config file on upgrade.
-If you changed it manually and upgrade Kresus, you'll find a backup in __INSTAL_DIR__.
+If you changed it manually and upgraded Kresus, you'll find a backup in __INSTALL_DIR__.
