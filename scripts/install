@@ -74,7 +74,7 @@ ynh_exec_as $app virtualenv --python=python3 --system-site-packages "${install_d
 #=================================================
 # INSTALL KRESUS WITH NPM
 #=================================================
-ynh_script_progression --message="Installing app..." --weight=1
+ynh_script_progression --message="Installing $app..." --weight=1
 
 ynh_use_nodejs
 (
