@@ -12,11 +12,12 @@ maintainers = ["Nicolas <nicofrand> Frandeboeuf"]
 [upstream]
 license = "AGPL-3.0-only"
 website = "https://framagit.org/kresusapp/kresus"
+demo = "https://kresus.org/fr/demo.html"
 admindoc = "https://kresus.org/en/doc.html"
 code = "https://framagit.org/kresusapp/kresus"
 
 [integration]
-yunohost = ">= 11.1.19"
+yunohost = ">= 11.2"
 architectures = ["amd64", "arm64"]
 multi_instance = true
 ldap = false

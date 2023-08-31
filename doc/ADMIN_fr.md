@@ -1,15 +1,8 @@
-## Démo
-
-* [Démo officielle](https://kresus.org/fr/demo.html) Ne créez pas une connexion à vos comptes bancaires, ou bien tout le monde pourra voir vos données bancaires privées !
-
 ## Limitations
 
 * Par défault, tous les utilisateurs ont accès aux comptes. L'administrateur doit manuellement sélectionner l'utilisateur autorisé via l'écran d'administration YunoHost.
 
 ## Feuille de route
-
-* À confirmer
-  * [x] Prise en charge ARM
 
 * À venir :
   * [ ] l'URL ne peut pas être modifiée
