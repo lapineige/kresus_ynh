@@ -21,6 +21,8 @@ Kresus is an open-source libre self-hosted personal finance manager. It allows y
 
 **Shipped version:** 0.19.3~ynh3
 
+**Demo:** https://kresus.org/fr/demo.html
+
 ## Screenshots
 
 ![Screenshot of Kresus](./doc/screenshots/screenshot.png)
