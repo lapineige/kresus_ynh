@@ -51,7 +51,7 @@ SystemCallErrorNumber=EPERM
 #  https://linux.m2osw.com/snapwebsites-postfixpostdrop18189-warning-mailqueueenter-create-file-maildrop25937318189-permission
 # Future wait for this ticket to be resolved: https://github.com/YunoHost/issues/issues/947
 SupplementaryGroups=postdrop
-ReadWritePaths=__INSTALL_DIR__/config.ini __INSTALL_DIR__/data/ /var/spool/postfix/maildrop/
+ReadWritePaths=__INSTALL_DIR__/config.ini __DATA_DIR__/ /var/spool/postfix/maildrop/
 
 
 [Install]
