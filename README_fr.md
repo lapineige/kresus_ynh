@@ -20,6 +20,8 @@ Kresus est un gestionnaire de finances personnelles gratuit et libre qui tourne 
 
 **Version incluse :** 0.19.3~ynh3
 
+**Démo :** https://kresus.org/fr/demo.html
+
 ## Captures d’écran
 
 ![Capture d’écran de Kresus](./doc/screenshots/screenshot.png)
