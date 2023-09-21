@@ -43,6 +43,18 @@ ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 # Create a dedicated NGINX config
 ynh_add_nginx_config
 
+# Create a dedicated systemd config
+ynh_add_systemd_config
+
+mkdir -p "/var/log/$app/"
+touch "/var/log/$app/$app.log"
+chown -R $app:$app "/var/log/$app/"
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate
+
+yunohost service add $app --description="Personal finance manager" --log="/var/log/$app/$app.log"
+
 #=================================================
 # SPECIFIC SETUP
 #=================================================
@@ -74,14 +86,13 @@ ynh_exec_as $app virtualenv --python=python3 --system-site-packages "${install_d
 #=================================================
 ynh_script_progression --message="Installing $app..." --weight=1
 
-ynh_use_nodejs
-(
-	cd "$install_dir"
+pushd $install_dir
+ 	ynh_use_nodejs
 	ynh_exec_warn_less ynh_exec_as $app env $ynh_node_load_PATH yarn install
 	ynh_exec_warn_less ynh_exec_as $app env $ynh_node_load_PATH yarn cache clean --all
 	ynh_secure_remove --file="$install_dir/.cache"
 	ynh_secure_remove --file="$install_dir/.yarn"
-)
+popd
 
 #=================================================
 # ADD A CONFIGURATION
@@ -92,35 +103,6 @@ ynh_add_config --template="../conf/config.ini" --destination="$install_dir/confi
 
 chmod 400 "$install_dir/config.ini"
 chown $app:$app "$install_dir/config.ini"
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=1
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Configuring log rotation..." --weight=1
-
-mkdir -p "/var/log/$app/"
-touch "/var/log/$app/$app.log"
-chown -R $app:$app "/var/log/$app/"
-
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate
-
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
-
-yunohost service add $app --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE

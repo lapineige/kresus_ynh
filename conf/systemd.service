@@ -1,5 +1,5 @@
 [Unit]
-Description=__APP__
+Description=__APP__: personal finance manager
 After=syslog.target network.target
 
 [Service]

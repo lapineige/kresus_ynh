@@ -29,14 +29,12 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-if [ -d "/home/ynh$app" ]
-then
+if [ -d "/home/ynh$app" ]; then
 	mv "/home/ynh$app/data" "$install_dir/data"
 	ynh_secure_remove --file="/home/ynh$app"
 fi
 
-if [ -z "${salt:-}" ]
-then
+if [ -z "${salt:-}" ]; then
 	salt=$(ynh_string_random 40)
 	ynh_app_setting_set --app=$app --key=salt --value=$salt
 fi
@@ -51,15 +49,8 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-	#tmpdir="$(mktemp -d)"
-	#cp "$install_dir/config.ini" "$tmpdir/config.ini"
-	#ynh_secure_remove --file="$install_dir"
-
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$install_dir" --keep="config.ini"
-
-	#cp "$tmpdir/config.ini" "$install_dir/config.ini"
-	#ynh_secure_remove --file="$tmpdir"
 fi
 
 chmod -R o-rwx "$install_dir"
@@ -73,12 +64,24 @@ ynh_script_progression --message="Upgrading dependencies..." --weight=1
 ynh_exec_warn_less ynh_install_nodejs --nodejs_version=$nodejs_version
 
 #=================================================
-# NGINX CONFIGURATION
+# REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
+ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+
+mkdir -p "/var/log/$app/"
+touch "/var/log/$app/$app.log"
+chown -R $app:$app "/var/log/$app/"
+
+# Use logrotate to manage app-specific logfile(s)
+ynh_use_logrotate --non-append
+
+yunohost service add $app --description="Personal finance manager" --log="/var/log/$app/$app.log"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -112,10 +115,8 @@ ynh_exec_as $app virtualenv --python=python3 --system-site-packages "${install_d
 #=================================================
 ynh_script_progression --message="Installing app..." --weight=1
 
-ynh_use_nodejs
-(
-	cd "$install_dir"
-
+pushd $install_dir
+ 	ynh_use_nodejs
 	# In case of nodejs upgrade, remove the current node_modules to make sure there are no errors
 	# linked to modules compiled for the previous version.
 	ynh_secure_remove --file="$install_dir/node_modules"
@@ -124,7 +125,7 @@ ynh_use_nodejs
 	ynh_exec_warn_less ynh_exec_as $app env $ynh_node_load_PATH yarn cache clean --all
 	ynh_secure_remove --file="$install_dir/.cache"
 	ynh_secure_remove --file="$install_dir/.yarn"
-)
+popd
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -135,35 +136,6 @@ ynh_add_config --template="../conf/config.ini" --destination="$install_dir/confi
 
 chmod 400 "$install_dir/config.ini"
 chown $app:$app "$install_dir/config.ini"
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
-
-mkdir -p "/var/log/$app/"
-touch "/var/log/$app/$app.log"
-chown -R $app:$app "/var/log/$app/"
-
-# Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append
-
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
-
-yunohost service add $app --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
